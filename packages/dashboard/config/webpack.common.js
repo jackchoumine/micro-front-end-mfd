@@ -1,8 +1,11 @@
-const { VueLoaderPlugin } = require('vue-loader');
+const { VueLoaderPlugin } = require('vue-loader')
+const path = require('path')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 module.exports = {
   entry: './src/index.js',
   output: {
+    path: path.resolve(__dirname, '../dist'),
     filename: '[name].[contenthash].js',
   },
   resolve: {
@@ -35,5 +38,10 @@ module.exports = {
       },
     ],
   },
-  plugins: [new VueLoaderPlugin()],
-};
+  plugins: [
+    new VueLoaderPlugin(),
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
+    }),
+  ],
+}

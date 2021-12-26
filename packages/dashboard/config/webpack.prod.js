@@ -1,8 +1,8 @@
-const { merge } = require('webpack-merge');
-const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
-const packageJson = require('../package.json');
-const commonConfig = require('./webpack.common');
-
+const { merge } = require('webpack-merge')
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
+const packageJson = require('../package.json')
+const commonConfig = require('./webpack.common')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const prodConfig = {
   mode: 'production',
   output: {
@@ -18,7 +18,8 @@ const prodConfig = {
       },
       shared: packageJson.dependencies,
     }),
+    new CleanWebpackPlugin(),
   ],
-};
+}
 
-module.exports = merge(commonConfig, prodConfig);
+module.exports = merge(commonConfig, prodConfig)
