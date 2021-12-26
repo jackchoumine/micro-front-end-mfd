@@ -2,7 +2,7 @@
   <div class="p-grid p-fluid dashboard">
     <div class="p-col-12 p-lg-4">
       <div class="card summary">
-        <span class="title">Users</span>
+        <span class="title">Users -- vue</span>
         <span class="detail">Number of visitors</span>
         <span class="count visitors">12</span>
       </div>
@@ -112,12 +112,7 @@
       <Panel header="Contact Us">
         <div class="p-grid">
           <div class="p-col-12">
-            <Dropdown
-              v-model="dropdownCity"
-              :options="dropdownCities"
-              optionLabel="name"
-              placeholder="Select a City"
-            />
+            <Dropdown v-model="dropdownCity" :options="dropdownCities" optionLabel="name" placeholder="Select a City" />
           </div>
           <div class="p-col-12">
             <InputText type="text" placeholder="Name" />
@@ -229,16 +224,8 @@
           <Column>
             <template #header> View </template>
             <template #body>
-              <Button
-                icon="pi pi-search"
-                type="button"
-                class="p-button-success p-mr-2 p-mb-1"
-              ></Button>
-              <Button
-                icon="pi pi-times"
-                type="button"
-                class="p-button-danger p-mb-1"
-              ></Button>
+              <Button icon="pi pi-search" type="button" class="p-button-success p-mr-2 p-mb-1"></Button>
+              <Button icon="pi pi-times" type="button" class="p-button-danger p-mb-1"></Button>
             </template>
           </Column>
         </DataTable>
@@ -253,20 +240,20 @@
 </template>
 
 <script>
-import 'primevue/resources/themes/saga-blue/theme.css';
-import 'primevue/resources/primevue.css';
-import 'primeflex/primeflex.css';
-import 'primeicons/primeicons.css';
+import 'primevue/resources/themes/saga-blue/theme.css'
+import 'primevue/resources/primevue.css'
+import 'primeflex/primeflex.css'
+import 'primeicons/primeicons.css'
 
-import Checkbox from 'primevue/checkbox';
-import Panel from 'primevue/panel';
-import Dropdown from 'primevue/dropdown';
-import InputText from 'primevue/inputtext';
-import Button from 'primevue/button';
-import Column from 'primevue/column';
-import DataTable from 'primevue/datatable';
-import Chart from 'primevue/chart';
-import ProgressBar from 'primevue/progressbar';
+import Checkbox from 'primevue/checkbox'
+import Panel from 'primevue/panel'
+import Dropdown from 'primevue/dropdown'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import Column from 'primevue/column'
+import DataTable from 'primevue/datatable'
+import Chart from 'primevue/chart'
+import ProgressBar from 'primevue/progressbar'
 
 export default {
   components: {
@@ -304,15 +291,7 @@ export default {
       products: null,
       selectedProducts: null,
       lineData: {
-        labels: [
-          'January',
-          'February',
-          'March',
-          'April',
-          'May',
-          'June',
-          'July',
-        ],
+        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
         datasets: [
           {
             label: 'First Dataset',
@@ -330,17 +309,17 @@ export default {
           },
         ],
       },
-    };
+    }
   },
   methods: {
     formatCurrency(value) {
       return value.toLocaleString('en-US', {
         style: 'currency',
         currency: 'USD',
-      });
+      })
     },
   },
-};
+}
 </script>
 
 <style lang="scss" scoped>
@@ -564,8 +543,8 @@ p {
 /* Footer */
 $footerBgColor: #ffffff;
 .dashboard {
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica,
-    Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif, Apple Color Emoji,
+    Segoe UI Emoji, Segoe UI Symbol;
   background-color: #edf0f5;
   .summary {
     position: relative;
