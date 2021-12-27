@@ -1,7 +1,10 @@
 const { VueLoaderPlugin } = require('vue-loader')
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-
+const WebpackBar = require('webpackbar')
+const Webpack = require('webpack')
+const ProgressBarWebpackPlugin = require('progress-bar-webpack-plugin')
+const FriendlyErrorsWebpackPlugin = require('@soda/friendly-errors-webpack-plugin')
 module.exports = {
   entry: './src/index.js',
   output: {
@@ -43,5 +46,15 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: './public/index.html',
     }),
+    new WebpackBar(), // 更加美观的进度条
+    // new ProgressBarWebpackPlugin(),
+    new FriendlyErrorsWebpackPlugin(),
+    new Webpack.DefinePlugin({
+      // moreInfo https://github.com/vuejs/vue-next/tree/master/packages/vue#bundler-build-feature-flags
+      __VUE_OPTIONS_API__: true,
+      __VUE_PROD_DEVTOOLS__: true,
+      // 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    }),
   ],
+  stats: 'none',
 }

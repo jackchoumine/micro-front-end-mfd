@@ -3,8 +3,6 @@ const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPl
 const packageJson = require('../package.json')
 const commonConfig = require('./webpack.common')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
-const WebpackBar = require('webpackbar')
-const ProgressBarWebpackPlugin = require('progress-bar-webpack-plugin')
 const prodConfig = {
   mode: 'production',
   output: {
@@ -21,9 +19,17 @@ const prodConfig = {
       shared: packageJson.dependencies,
     }),
     new CleanWebpackPlugin(),
-    new WebpackBar(), // 更加美观
     // new ProgressBarWebpackPlugin(),
   ],
+  stats: {
+    colors: true,
+    assetsSort: 'size',
+    chunksSort: '!size',
+    groupReasonsByOrigin: true,
+    builtAt: true,
+    colors: true,
+    depth: false,
+  },
 }
 
 module.exports = merge(commonConfig, prodConfig)

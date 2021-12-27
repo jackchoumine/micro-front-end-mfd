@@ -27,6 +27,7 @@ const devConfig = {
       shared: packageJson.dependencies,
     }),
   ],
+  // stats: 'error-only', // 开发环境下不显示日志
 }
 
 module.exports = merge(commonConfig, devConfig)
