@@ -43,7 +43,7 @@ export default {
         //NOTE 默认去到首页
         nextPath = currentPath.replace(basePath, '') ?? '/'
       }
-      // NOTE 如果是 isisMemoryHistory，才跳转
+      // NOTE 如果是 memoryHistory，才跳转
       isMemoryHistory && router.push(nextPath)
     })
     return {}
