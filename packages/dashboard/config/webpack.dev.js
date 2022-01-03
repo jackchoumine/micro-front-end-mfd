@@ -5,14 +5,16 @@ const packageJson = require('../package.json')
 
 const devConfig = {
   mode: 'development',
-  output: {
-    publicPath: 'http://localhost:8083/',
-  },
+  // output: {
+  //   publicPath: 'http://localhost:8083/',
+  // },
   devServer: {
     port: 8083,
-    historyApiFallback: {
-      index: 'index.html',
-    },
+    // FIXME 解决刷新页面，空白的问题
+    historyApiFallback: true,
+    // historyApiFallback: {
+    //   index: 'index.html',
+    // },
     headers: {
       'Access-Control-Allow-Origin': '*',
     },
