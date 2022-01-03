@@ -6,10 +6,17 @@ export default () => {
   const ref = useRef(null)
   const history = useHistory()
   useEffect(() => {
-    mount(ref.current, { isMemoryHistory: true, basePath: '/dashboard' })
-    history.listen((location) => {
-      console.log(location)
-    }) //onParentNavigate
+    const { onParentNavigate } = mount(ref.current, {
+      isMemoryHistory: true,
+      basePath: '/dashboard',
+      currentPath: history.location.pathname,
+    })
+    console.log('container dashboard')
+    // history.listen((location) => {
+    //   console.log('dashboard location')
+    //   console.log(location)
+    // }) //onParentNavigate
+    history.listen(onParentNavigate)
   }, [])
 
   return <div ref={ref} />

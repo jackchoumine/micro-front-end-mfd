@@ -1,19 +1,13 @@
 import { createApp } from 'vue'
 // import App from './components/Hello.vue'
 import App from './App.vue'
-// Mount function to start up the app
 import { setupRouter } from './route'
-import { useRouter, useRoute } from 'vue-router'
-const router = useRouter()
-// console.log(useRouter)
-console.log('router')
-console.log(router)
-const mount = (el, { isMemoryHistory = false, basePath = '/' }) => {
+
+const mount = (el, { isMemoryHistory, basePath, currentPath }) => {
   console.log(basePath)
-  const app = createApp(App)
+  console.log('isMemoryHistory', isMemoryHistory)
+  const app = createApp(App, { basePath, currentPath, isMemoryHistory })
   setupRouter(app, { isMemoryHistory, basePath })
-  console.log(router)
-  // router.push('/upload')
   app.mount(el)
   return {
     onParentNavigate({ pathname: nextPathname }) {
@@ -21,6 +15,7 @@ const mount = (el, { isMemoryHistory = false, basePath = '/' }) => {
       // if (pathname !== nextPathname) {
       //   // history.push(nextPathname)
       // }
+      console.log('dashboard vue')
       console.log(nextPathname)
     },
   }
@@ -30,7 +25,7 @@ const mount = (el, { isMemoryHistory = false, basePath = '/' }) => {
 // call mount immediately
 if (process.env.NODE_ENV === 'development') {
   const devRoot = document.querySelector('#dashboard-dev-root')
-
+  // const url = new URL(window.location.href)
   if (devRoot) {
     mount(devRoot, {})
   }
