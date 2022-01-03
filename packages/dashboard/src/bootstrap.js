@@ -1,9 +1,11 @@
 import { createApp } from 'vue'
-import Dashboard from './components/Hello.vue'
-
+// import App from './components/Hello.vue'
+import App from './App.vue'
 // Mount function to start up the app
+import { setupRouter } from './route'
 const mount = (el) => {
-  const app = createApp(Dashboard)
+  const app = createApp(App)
+  setupRouter(app)
   app.mount(el)
 }
 

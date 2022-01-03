@@ -5,6 +5,8 @@ const WebpackBar = require('webpackbar')
 const Webpack = require('webpack')
 const ProgressBarWebpackPlugin = require('progress-bar-webpack-plugin')
 const FriendlyErrorsWebpackPlugin = require('@soda/friendly-errors-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+
 module.exports = {
   entry: './src/index.js',
   output: {
@@ -26,7 +28,20 @@ module.exports = {
       },
       {
         test: /\.scss|\.css$/,
-        use: ['vue-style-loader', 'style-loader', 'css-loader', 'sass-loader'],
+        use: [
+          'vue-style-loader',
+          // 同时使用 vue-style-loader style-loader，报错
+          // TypeError: Cannot read properties of undefined (reading 'locals')
+          // 'style-loader',
+          // {
+          //   loader: MiniCssExtractPlugin.loader,
+          //   options: {
+          //     esModule: false,
+          //   },
+          // },
+          'css-loader',
+          'sass-loader',
+        ],
       },
       {
         test: /\.m?js$/,
@@ -55,6 +70,7 @@ module.exports = {
       __VUE_PROD_DEVTOOLS__: true,
       // 'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
     }),
+    // new MiniCssExtractPlugin(),
   ],
   stats: 'none',
 }
