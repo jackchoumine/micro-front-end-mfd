@@ -1,6 +1,9 @@
 <template>
   <div>
-    <h1>upload</h1>
+    <h1>
+      upload page
+      <RouterLink to="/">Home</RouterLink>
+    </h1>
   </div>
 </template>
 <script>

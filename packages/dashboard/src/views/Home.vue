@@ -9,6 +9,7 @@
     <!-- <TestStencil /> -->
     <hr />
     <!-- <StencilRender :personArray="[{ name: 'stencil------' }]" /> -->
+    <RouterLink to="/upload">upload page</RouterLink>
   </div>
 </template>
 <script setup>
