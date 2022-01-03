@@ -10,12 +10,15 @@ export default () => {
       isMemoryHistory: true,
       basePath: '/dashboard',
       currentPath: history.location.pathname,
+      onNavigate: (currentPath) => {
+        console.log('dashboard vue ', currentPath)
+        const { pathname } = history.location
+        if (pathname !== currentPath) {
+          history.push(nextPathname)
+        }
+      },
     })
     console.log('container dashboard')
-    // history.listen((location) => {
-    //   console.log('dashboard location')
-    //   console.log(location)
-    // }) //onParentNavigate
     history.listen(onParentNavigate)
   }, [])
 

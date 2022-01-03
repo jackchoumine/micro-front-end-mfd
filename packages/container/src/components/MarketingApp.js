@@ -10,6 +10,7 @@ export default () => {
     const { onParentNavigate } = mount(ref.current, {
       initialPath: history.location.pathname,
       onNavigate: ({ pathname: nextPathname }) => {
+        console.log('marketing react: ', nextPathname)
         const { pathname } = history.location
 
         if (pathname !== nextPathname) {

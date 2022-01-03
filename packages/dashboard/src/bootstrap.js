@@ -2,21 +2,30 @@ import { createApp } from 'vue'
 // import App from './components/Hello.vue'
 import App from './App.vue'
 import { setupRouter } from './route'
+import { createRouter, createWebHistory, createMemoryHistory, RouteRecordRaw } from 'vue-router'
 
-const mount = (el, { isMemoryHistory, basePath, currentPath }) => {
+const mount = (el, { isMemoryHistory, basePath, currentPath, onNavigate }) => {
   console.log(basePath)
-  console.log('isMemoryHistory', isMemoryHistory)
+  console.log(onNavigate)
+  console.log('isMemoryHistory', isMemoryHistory, currentPath)
   const app = createApp(App, { basePath, currentPath, isMemoryHistory })
-  setupRouter(app, { isMemoryHistory, basePath })
+  const history = isMemoryHistory ? createMemoryHistory(basePath) : createWebHistory()
+  console.log(history)
+  const url = new URL(window.location.href)
+  console.log('history.location', history.location, url.pathname)
+  setupRouter(app, { history })
+  // history.push('/upload')
+  history.listen(onNavigate)
   app.mount(el)
   return {
     onParentNavigate({ pathname: nextPathname }) {
-      // const { pathname } = history.location
-      // if (pathname !== nextPathname) {
-      //   // history.push(nextPathname)
-      // }
-      console.log('dashboard vue')
-      console.log(nextPathname)
+      console.log('dashboard vue onParentNavigate', nextPathname)
+      history.listen((currentPath) => {
+        if (currentPath !== nextPathname) {
+          console.log(currentPath)
+          history.push(nextPathname)
+        }
+      })
     },
   }
 }
