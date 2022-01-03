@@ -1,5 +1,5 @@
 import { App } from 'vue'
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, createMemoryHistory, RouteRecordRaw } from 'vue-router'
 
 const routes = [
   {
@@ -14,15 +14,17 @@ const routes = [
   },
 ]
 
-const router = createRouter({
-  // 4. Provide the history implementation to use.
-  // We are using the hash history for simplicity here.
-  history: createWebHistory(),
-  routes, // short for `routes: routes`
-})
-
-export function setupRouter(app) {
+export function setupRouter(app, { isMemoryHistory = false }) {
+  const router = createRouter({
+    // 4. Provide the history implementation to use.
+    // We are using the hash history for simplicity here.
+    // baseUrl: '/dashboard',
+    // 最为子应用，使用内存history
+    // https://next.router.vuejs.org/api/#creatememoryhistory
+    history: isMemoryHistory ? createMemoryHistory() : createWebHistory(),
+    routes, // short for `routes: routes`
+  })
   app.use(router)
 }
 
-export default router
+// export default router
