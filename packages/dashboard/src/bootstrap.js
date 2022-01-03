@@ -3,10 +3,27 @@ import { createApp } from 'vue'
 import App from './App.vue'
 // Mount function to start up the app
 import { setupRouter } from './route'
-const mount = (el, { isMemoryHistory = false }) => {
+import { useRouter, useRoute } from 'vue-router'
+const router = useRouter()
+// console.log(useRouter)
+console.log('router')
+console.log(router)
+const mount = (el, { isMemoryHistory = false, basePath = '/' }) => {
+  console.log(basePath)
   const app = createApp(App)
-  setupRouter(app, { isMemoryHistory })
+  setupRouter(app, { isMemoryHistory, basePath })
+  console.log(router)
+  // router.push('/upload')
   app.mount(el)
+  return {
+    onParentNavigate({ pathname: nextPathname }) {
+      // const { pathname } = history.location
+      // if (pathname !== nextPathname) {
+      //   // history.push(nextPathname)
+      // }
+      console.log(nextPathname)
+    },
+  }
 }
 
 // If we are in development and in isolation,
