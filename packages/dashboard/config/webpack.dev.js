@@ -11,6 +11,7 @@ const devConfig = {
   devServer: {
     port: 8083,
     // FIXME 解决刷新页面，空白的问题
+    // https://webpack.js.org/configuration/dev-server/#devserverhistoryapifallback
     historyApiFallback: true,
     // historyApiFallback: {
     //   index: 'index.html',
