@@ -117,6 +117,13 @@ export default function Pricing() {
     <React.Fragment>
       {/* Hero unit */}
       <Container maxWidth='sm' component='main' className={classes.heroContent}>
+        <Button component={RouterLink} to='/' fullWidth color='primary' variant='contained'>
+          Home Page
+        </Button>
+        <hr />
+        <Button component={RouterLink} to='/dashboard' fullWidth variant='outlined' color='primary'>
+          dashboard
+        </Button>
         <Typography component='h1' variant='h2' align='center' color='textPrimary' gutterBottom>
           Pricing
         </Typography>
