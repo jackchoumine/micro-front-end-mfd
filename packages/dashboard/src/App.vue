@@ -4,6 +4,7 @@
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/upload">Upload Dropzone</RouterLink>
     </div>
+    <!-- NOTE  给路由出口传递数据 -->
     <RouterView :sharedData="sharedData" />
   </div>
 </template>

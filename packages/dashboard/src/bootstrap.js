@@ -2,7 +2,8 @@ import { createApp } from 'vue'
 // import App from './components/Hello.vue'
 import App from './App.vue'
 import { setupRouter } from './route'
-import { createRouter, createWebHistory, createMemoryHistory, RouteRecordRaw } from 'vue-router'
+import { createWebHistory, createMemoryHistory } from 'vue-router'
+
 function mount(el, { isMemoryHistory, basePath, currentPath, onNavigate, sharedData = {} }) {
   const app = createApp(App, { basePath, currentPath, isMemoryHistory, onNavigate, sharedData })
   const history = isMemoryHistory ? createMemoryHistory(basePath) : createWebHistory()

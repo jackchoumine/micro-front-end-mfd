@@ -18,7 +18,7 @@ const history = createBrowserHistory()
 
 export default () => {
   const [isSignedIn, setIsSignedIn] = useState(false)
-
+  const [user, setUser] = useState({ email: '', password: '' })
   useEffect(() => {
     if (isSignedIn) {
       history.push('/dashboard')
@@ -33,11 +33,16 @@ export default () => {
           <Suspense fallback={<Progress />}>
             <Switch>
               <Route path='/auth'>
-                <AuthLazy onSignIn={() => setIsSignedIn(true)} />
+                <AuthLazy
+                  onSignIn={(user) => {
+                    setUser(user)
+                    setIsSignedIn(true)
+                  }}
+                />
               </Route>
               <Route path='/dashboard'>
                 {/* {!isSignedIn && <Redirect to='/' />} */}
-                <DashboardLazy />
+                <DashboardLazy user={user} isSignedIn={isSignedIn} />
               </Route>
               <Route path='/' component={MarketingLazy} />
             </Switch>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Avatar from '@material-ui/core/Avatar'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom'
 
 export default function SignIn({ onSignIn }) {
   const classes = useStyles()
-
+  const [user, setUser] = useState({ email: '', password: '' })
   return (
     <Container component='main' maxWidth='xs'>
       <div className={classes.paper}>
@@ -35,6 +35,7 @@ export default function SignIn({ onSignIn }) {
             name='email'
             autoComplete='email'
             autoFocus
+            onChange={(e) => setUser({ ...user, email: e.target.value })}
           />
           <TextField
             variant='outlined'
@@ -46,6 +47,7 @@ export default function SignIn({ onSignIn }) {
             type='password'
             id='password'
             autoComplete='current-password'
+            onChange={(e) => setUser({ ...user, password: e.target.value })}
           />
           <FormControlLabel control={<Checkbox value='remember' color='primary' />} label='Remember me' />
           <Button
@@ -54,7 +56,7 @@ export default function SignIn({ onSignIn }) {
             variant='contained'
             color='primary'
             className={classes.submit}
-            onClick={onSignIn}
+            onClick={() => onSignIn(user)}
           >
             Sign In
           </Button>

@@ -7,6 +7,8 @@
     <!-- 传递复杂数据 https://github.com/ionic-team/stencil/issues/2810 -->
     <h2>TestStencil</h2>
     <!-- <TestStencil /> -->
+    <p>是否登录：{{ sharedData.isSignedIn ? '是' : '否' }}</p>
+    <p>用户名信息：{{ sharedData.user }}</p>
     <hr />
     <!-- <StencilRender :personArray="[{ name: 'stencil------' }]" /> -->
     <RouterLink to="/upload">upload page</RouterLink>
@@ -19,6 +21,12 @@ import { onMounted, ref } from 'vue'
 
 const maxValue = ref(5)
 const value = ref(1)
+
+defineProps({
+  sharedData: {
+    type: Object,
+  },
+})
 
 onMounted(() => {
   console.log('Home mounted')
