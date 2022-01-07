@@ -6,7 +6,7 @@ import Typography from '@material-ui/core/Typography'
 import { makeStyles } from '@material-ui/core/styles'
 import { Link as RouterLink } from 'react-router-dom'
 
-export default function Header({ isSignedIn, onSignOut }) {
+export function Header({ isSignedIn, onSignOut }) {
   const classes = useStyles()
 
   const onClick = () => {
