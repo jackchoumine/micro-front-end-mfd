@@ -17,8 +17,8 @@ const generateClassName = createGenerateClassName({
 const history = createBrowserHistory()
 
 export default () => {
-  const [isSignedIn, setIsSignedIn] = useState(false)
-  const [user, setUser] = useState({ email: '', password: '' })
+  const [isSignedIn, setIsSignedIn] = useState(window.localStorage.getItem('isSignedIn') === 'true')
+  const [user, setUser] = useState(JSON.parse(window.localStorage.getItem('user')))
   useEffect(() => {
     if (isSignedIn) {
       history.push('/dashboard')
@@ -36,6 +36,10 @@ export default () => {
                 <AuthLazy
                   onSignIn={(user) => {
                     setUser(user)
+                    // 使用本地存储
+                    window.sessionStorage.setItem('user', JSON.stringify(user))
+                    window.localStorage.setItem('user', JSON.stringify(user))
+                    window.localStorage.setItem('isSignedIn', JSON.stringify(true))
                     setIsSignedIn(true)
                   }}
                 />

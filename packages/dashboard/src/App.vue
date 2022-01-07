@@ -54,6 +54,11 @@ export default {
         //NOTE 默认去到首页
         nextPath = currentPath.replace(basePath, '') ?? '/'
       }
+      // 使用本地存储
+      const user = window.localStorage.getItem('user')
+      const sUser = JSON.parse(window.sessionStorage.getItem('user'))
+      console.log(user)
+      console.log(sUser)
       // NOTE 如果是 memoryHistory，才跳转
       isMemoryHistory && router.push(nextPath)
     })
