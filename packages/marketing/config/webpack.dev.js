@@ -1,19 +1,22 @@
-const { merge } = require('webpack-merge');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin');
-const commonConfig = require('./webpack.common');
-const packageJson = require('../package.json');
+const { merge } = require('webpack-merge')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
+const commonConfig = require('./webpack.common')
+const packageJson = require('../package.json')
 
 const devConfig = {
   mode: 'development',
   output: {
     publicPath: 'http://localhost:8081/',
+    clean: true, // build之前清空dist目录
   },
   devServer: {
     port: 8081,
-    historyApiFallback: {
-      index: 'index.html',
-    },
+    historyApiFallback: true,
+    // NOTE 这种设置失效
+    // historyApiFallback: {
+    //   index: 'index.html',
+    // },
   },
   plugins: [
     new ModuleFederationPlugin({
@@ -28,6 +31,6 @@ const devConfig = {
       template: './public/index.html',
     }),
   ],
-};
+}
 
-module.exports = merge(commonConfig, devConfig);
+module.exports = merge(commonConfig, devConfig)
