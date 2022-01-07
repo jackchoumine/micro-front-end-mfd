@@ -4,7 +4,7 @@ import { createMemoryHistory, createBrowserHistory } from 'history'
 import App from './App'
 
 // Mount function to start up the app
-const mount = (el, { onChildNavigate, defaultHistory, currentPathParent }) => {
+function mount(el, { onChildNavigate, defaultHistory, currentPathParent }) {
   const history =
     defaultHistory ||
     createMemoryHistory({
@@ -28,6 +28,14 @@ const mount = (el, { onChildNavigate, defaultHistory, currentPathParent }) => {
       nextPathname && pathname !== nextPathname && history.push(nextPathname)
     },
   }
+}
+
+// If we are in development and in isolation,
+// call mount immediately
+if (process.env.NODE_ENV === 'development') {
+  const el = document.getElementById('_marketing-dev-root')
+  const history = createBrowserHistory()
+  el && mount(el, { defaultHistory: history })
 }
 
 // We are running through container
