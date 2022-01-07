@@ -1,43 +1,35 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { createMemoryHistory, createBrowserHistory } from 'history';
-import App from './App';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { createMemoryHistory, createBrowserHistory } from 'history'
+import App from './App'
 
 // Mount function to start up the app
-const mount = (el, { onNavigate, defaultHistory, initialPath }) => {
+const mount = (el, { onChildNavigate, defaultHistory, currentPathParent }) => {
   const history =
     defaultHistory ||
     createMemoryHistory({
-      initialEntries: [initialPath],
-    });
-
-  if (onNavigate) {
-    history.listen(onNavigate);
+      initialEntries: [currentPathParent],
+    })
+  const { pathname: currentPathChild } = history.location
+  // NOTE 浏览器刷新，应用会重新挂载，此时要保持路径和当前路径一致
+  if (currentPathParent && currentPathChild && currentPathParent !== currentPathChild) {
+    console.log('child history.push', currentPathParent)
+    history.push(currentPathParent)
   }
 
-  ReactDOM.render(<App history={history} />, el);
+  onChildNavigate && history.listen(onChildNavigate)
+
+  ReactDOM.render(<App history={history} />, el)
 
   return {
     onParentNavigate({ pathname: nextPathname }) {
-      const { pathname } = history.location;
+      const { pathname } = history.location
 
-      if (pathname !== nextPathname) {
-        history.push(nextPathname);
-      }
+      nextPathname && pathname !== nextPathname && history.push(nextPathname)
     },
-  };
-};
-
-// If we are in development and in isolation,
-// call mount immediately
-if (process.env.NODE_ENV === 'development') {
-  const devRoot = document.querySelector('#_marketing-dev-root');
-
-  if (devRoot) {
-    mount(devRoot, { defaultHistory: createBrowserHistory() });
   }
 }
 
 // We are running through container
 // and we should export the mount function
-export { mount };
+export { mount }
