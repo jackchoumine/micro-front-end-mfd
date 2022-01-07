@@ -18,6 +18,7 @@ const history = createBrowserHistory()
 export default () => {
   const [isSignedIn, setIsSignedIn] = useState(window.localStorage.getItem('isSignedIn') === 'true')
   const [user, setUser] = useState(JSON.parse(window.localStorage.getItem('user')))
+
   useEffect(() => {
     if (isSignedIn) {
       history.push('/dashboard')

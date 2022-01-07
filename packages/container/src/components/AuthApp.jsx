@@ -8,13 +8,11 @@ export default ({ onSignIn }) => {
 
   useEffect(() => {
     const { onParentNavigate } = mount(ref.current, {
-      initialPath: history.location.pathname,
-      onNavigate: ({ pathname: nextPathname }) => {
+      currentPathParent: history.location.pathname,
+      onChildNavigate: ({ pathname: nextPathname }) => {
         const { pathname } = history.location
 
-        if (pathname !== nextPathname) {
-          history.push(nextPathname)
-        }
+        nextPathname && pathname !== nextPathname && history.push(nextPathname)
       },
       onSignIn,
     })
