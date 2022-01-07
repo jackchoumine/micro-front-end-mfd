@@ -28,7 +28,15 @@ export default () => {
     <Router history={history}>
       <StylesProvider generateClassName={generateClassName}>
         <div>
-          <Header onSignOut={() => setIsSignedIn(false)} isSignedIn={isSignedIn} />
+          <Header
+            onSignOut={() => {
+              window.localStorage.removeItem('isSignedIn')
+              window.localStorage.removeItem('user')
+              window.sessionStorage.removeItem('user')
+              setIsSignedIn(false)
+            }}
+            isSignedIn={isSignedIn}
+          />
           <Suspense fallback={<Progress />}>
             <Switch>
               <Route path='/auth'>
