@@ -2,7 +2,7 @@ import { mount } from 'dashboard/DashboardApp'
 import React, { useRef, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
-export default () => {
+export default ({ isSignedIn, user }) => {
   const ref = useRef(null)
   const history = useHistory()
   useEffect(() => {
@@ -10,15 +10,16 @@ export default () => {
       isMemoryHistory: true,
       basePath: '/dashboard',
       currentPath: history.location.pathname,
-      onNavigate: (currentPath) => {
-        console.log('dashboard vue ', currentPath)
+      onNavigate: (nextPathname) => {
         const { pathname } = history.location
-        if (pathname !== currentPath) {
+        if (pathname !== nextPathname) {
+          console.log('vue 子应用跳转', nextPathname)
           history.push(nextPathname)
         }
       },
+      sharedData: { isSignedIn, user },
     })
-    console.log('container dashboard')
+    console.log('container dashboard navigate')
     history.listen(onParentNavigate)
   }, [])
 

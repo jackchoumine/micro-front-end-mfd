@@ -1,25 +1,23 @@
 <template>
   <div id="app">
-    <!-- <NotificationProvider> -->
     <div id="nav">
       <RouterLink to="/">Home</RouterLink>
       <RouterLink to="/upload">Upload Dropzone</RouterLink>
     </div>
-    <RouterView />
-    <!-- </NotificationProvider> -->
+    <RouterView :sharedData="sharedData" />
   </div>
 </template>
 
 <script>
-import { nextTick, onMounted } from '@vue/runtime-core'
-import { useRouter } from 'vue-router'
-// import { NotificationProvider } from './store'
+import { onMounted, watch } from '@vue/runtime-core'
+import { useRouter, useRoute } from 'vue-router'
 export default {
   name: 'App',
-  components: {
-    // NotificationProvider,
-  },
+  components: {},
   props: {
+    onNavigate: {
+      type: Function,
+    },
     basePath: {
       type: String,
       default: '/',
@@ -32,12 +30,24 @@ export default {
       type: Boolean,
       default: false,
     },
+    sharedData: {
+      type: Object,
+      default: () => ({}),
+    },
   },
   setup(props) {
+    const { basePath, currentPath, isMemoryHistory, onNavigate, sharedData } = props
     const router = useRouter()
-    const { basePath, currentPath, isMemoryHistory } = props
+    const route = useRoute()
+
+    function onRouteChange(newPath) {
+      onNavigate && onNavigate(basePath + newPath)
+    }
+
+    watch(() => route.path, onRouteChange)
+
     onMounted(() => {
-      console.log('App vue mounted', basePath, currentPath)
+      console.log('App vue mounted', basePath, currentPath, sharedData)
       let nextPath = currentPath
       if (currentPath.startsWith(basePath)) {
         //NOTE 默认去到首页
@@ -46,6 +56,7 @@ export default {
       // NOTE 如果是 memoryHistory，才跳转
       isMemoryHistory && router.push(nextPath)
     })
+
     return {}
   },
 }
