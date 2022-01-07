@@ -1,12 +1,6 @@
 <template>
   <div>
     <h1>home</h1>
-    <span class="rating">hello web component in stencil!</span>
-    <!-- BUG 无法监听事件 -->
-    <!-- https://github.com/ionic-team/stencil/issues/2804 -->
-    <!-- 传递复杂数据 https://github.com/ionic-team/stencil/issues/2810 -->
-    <h2>TestStencil</h2>
-    <!-- <TestStencil /> -->
     <p>是否登录：{{ sharedData.isSignedIn ? '是' : '否' }}</p>
     <p>用户名信息：{{ sharedData.user }}</p>
     <hr />
