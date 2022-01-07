@@ -7,7 +7,8 @@ const prodConfig = {
   mode: 'production',
   output: {
     filename: '[name].[contenthash].js',
-    publicPath: '/dashboard/latest/',
+    // publicPath: '/dashboard/latest/',
+    clean: true,
   },
   plugins: [
     new ModuleFederationPlugin({
@@ -18,7 +19,6 @@ const prodConfig = {
       },
       shared: packageJson.dependencies,
     }),
-    new CleanWebpackPlugin(),
     // new ProgressBarWebpackPlugin(),
   ],
   stats: {
