@@ -1,15 +1,21 @@
 # webpack 5 模块联邦实现微前端
 
-微前端：将**巨大**的**单体**前端系统拆分成**多个独立**的小型系统，用户感知上还是一个系统的架构思路，**分而治之**，让系统更加容易维护、更易扩展，实施微前端是一个**先拆分**，**后合并**的过程。
+微前端：将**巨大**的**单体**前端系统拆分成**多个独立**的小型系统，用户感知上还是一个系统的架构思路，**分而治之**，让系统
+更加容易维护、更易扩展，实施微前端是一个**先拆分**，**后合并**的过程。
 
 > 这里的前端应用指的是前后端分离的单应用页面，在这基础才谈论微前端才有意义。
 
+## 为何需要微前端
 
-微前端的好处
+巨石单体系统随着业务的增加，变得越来越臃肿，多个团队一起开发，沟通成功高，编译、部署、测试、维护困难，微前端可解决这些问
+题。
 
 1. 应用自治：各个应用相互独立，规模更小，更容易扩展、测试、构建、维护、排错、升级依赖等；
 2. 团队自治：应用独立后，团队也会独立，减少很多人在一个巨石应用中同时开发，相互影响；
-3. 技术无关：各个应用可选择不同的框架开发，**尽量保持统一**，否则应用之间交互会可能遇到麻烦，也不利于组件复用，比如无法功能组件级别的代码；
+3. 技术无关：各个应用可选择不同的框架开发，**尽量保持统一**，否则应用之间交互会可能遇到麻烦，也不利于组件复用，比如无法
+   功能组件级别的代码；
+4. 尝试新技术：应用拆分后，可在系统里尝试新技术。
+5. 老系统增量重构。
 
 缺点：
 
@@ -31,13 +37,34 @@
 
 [微前端](https://martinfowler.com/articles/micro-frontends.html)
 
+## 如何集成 --- 聚合
+
+主要三种集成方式：
+
+![三种集成](https://tva1.sinaimg.cn/large/008i3skNgy1gy5h55k4g9j31ci0oyae2.jpg)
+
+构建时集成：把微应用打包进入主应用，微应用通常以 npm 的形式打包进入主应用。
+
+优点：实施容易且很好理解。
+
+缺点：有依赖关系的应用之间，其中一个更新，另一个也要更新，然后部署，实际上无法独立部署。
+
+运行时构建：主应用在浏览器加载后，再去获取微应用代码。实施容易且很好理解。
+
+优点：独立部署，主应用能决定使用哪个微应用的版本，灵活，性能好。
+
+缺点：设置复杂，不好理解。
+
+服务端集成：主应用向服务器请求微应用，服务器决定是否给代码。实现复杂，一般不使用。
+
 ## 常见的微前端实施方案
 
 [MicroApp](https://micro-zoe.github.io/micro-app/)
+
 ## 模块联邦 -- Module Federation
 
-模块联邦是 webpack5 引入的特性，能**轻易实现**在两个使用 webpack 构建的项目之间**共享代码**，甚
-至**组合不同的应用为一个应用**。
+模块联邦是 webpack5 引入的特性，能**轻易实现**在两个使用 webpack 构建的项目之间**共享代码**，甚至**组合不同的应用为一个
+应用**。
 
 [Module Federation 官网](https://module-federation.github.io/)
 
@@ -74,7 +101,7 @@ const mount = (el, { isMemoryHistory, basePath, currentPath, onNavigate, sharedD
   return {
     onParentNavigate({ pathname: nextPathname }) {
       console.log('dashboard vue onParentNavigate', nextPathname)
-      history.listen(currentPath => {
+      history.listen((currentPath) => {
         if (currentPath !== nextPathname) {
           history.push(nextPathname)
         }
@@ -114,79 +141,80 @@ App.vue
 </template>
 
 <script>
-import { nextTick, onMounted, watch } from '@vue/runtime-core'
-import { useRouter, useRoute } from 'vue-router'
-// import { NotificationProvider } from './store'
-export default {
-  name: 'App',
-  components: {
-    // NotificationProvider,
-  },
-  props: {
-    onNavigate: {
-      type: Function,
+  import { nextTick, onMounted, watch } from '@vue/runtime-core'
+  import { useRouter, useRoute } from 'vue-router'
+  // import { NotificationProvider } from './store'
+  export default {
+    name: 'App',
+    components: {
+      // NotificationProvider,
     },
-    basePath: {
-      type: String,
-      default: '/',
+    props: {
+      onNavigate: {
+        type: Function,
+      },
+      basePath: {
+        type: String,
+        default: '/',
+      },
+      currentPath: {
+        type: String,
+        default: '/',
+      },
+      isMemoryHistory: {
+        type: Boolean,
+        default: false,
+      },
+      sharedData: {
+        type: Object,
+        default: () => ({}),
+      },
     },
-    currentPath: {
-      type: String,
-      default: '/',
+    setup(props) {
+      const { basePath, currentPath, isMemoryHistory, onNavigate, sharedData } = props
+      const router = useRouter()
+      const route = useRoute()
+      watch(
+        () => route.path,
+        (newPath) => {
+          onNavigate && onNavigate(basePath + newPath)
+        },
+      )
+      onMounted(() => {
+        console.log('App vue mounted', basePath, currentPath, sharedData)
+        let nextPath = currentPath
+        if (currentPath.startsWith(basePath)) {
+          //NOTE 默认去到首页
+          nextPath = currentPath.replace(basePath, '') ?? '/'
+        }
+        // NOTE 如果是 memoryHistory，才跳转
+        isMemoryHistory && router.push(nextPath)
+      })
+      return {}
     },
-    isMemoryHistory: {
-      type: Boolean,
-      default: false,
-    },
-    sharedData: {
-      type: Object,
-      default: () => ({})
-    }
-  },
-  setup(props) {
-    const { basePath, currentPath, isMemoryHistory, onNavigate, sharedData } = props
-    const router = useRouter()
-    const route = useRoute()
-    watch(
-      () => route.path,
-      (newPath) => {
-        onNavigate && onNavigate(basePath + newPath)
-      }
-    )
-    onMounted(() => {
-      console.log('App vue mounted', basePath, currentPath, sharedData)
-      let nextPath = currentPath
-      if (currentPath.startsWith(basePath)) {
-        //NOTE 默认去到首页
-        nextPath = currentPath.replace(basePath, '') ?? '/'
-      }
-      // NOTE 如果是 memoryHistory，才跳转
-      isMemoryHistory && router.push(nextPath)
-    })
-    return {}
-  },
-}
+  }
 </script>
 
 <style scoped lang="scss">
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  padding-bottom: 10px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-  &.router-link-exact-active {
-    color: #42b983;
+  #app {
+    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-align: center;
+    color: #2c3e50;
+    padding-bottom: 10px;
   }
-}
+
+  #nav a {
+    font-weight: bold;
+    color: #2c3e50;
+    &.router-link-exact-active {
+      color: #42b983;
+    }
+  }
 </style>
 ```
+
 route
 
 ```js
@@ -237,7 +265,7 @@ export default ({ isSignedIn, user }) => {
       isMemoryHistory: true,
       basePath: '/dashboard',
       currentPath: history.location.pathname,
-      onNavigate: nextPathname => {
+      onNavigate: (nextPathname) => {
         const { pathname } = history.location
         if (pathname !== nextPathname) {
           console.log('vue 子应用跳转', nextPathname)
@@ -253,6 +281,7 @@ export default ({ isSignedIn, user }) => {
   return <div ref={ref} />
 }
 ```
+
 ## 参考
 
 [Webpack 5 and Module Federation - A Microfrontend Revolution](https://dev.to/marais/webpack-5-and-module-federation-4j1i)
