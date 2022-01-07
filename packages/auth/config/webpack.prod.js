@@ -7,7 +7,6 @@ const prodConfig = {
   mode: 'production',
   output: {
     filename: '[name].[contenthash].js',
-    publicPath: '/auth/latest/',
     clean: true, // build 前删除 dist 文件夹
   },
   plugins: [
