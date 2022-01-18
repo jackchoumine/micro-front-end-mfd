@@ -880,7 +880,7 @@ marketing --- react
 
 本文根据视频教
 程[使用 React 的微前端，完整的开发指南 Microfrontends with React A Complete Developer's Guide](https://www.bilibili.com/video/BV1Yq4y1o7ab)整
-理，强烈推荐，p43 --- p66 CICD 可跳过。
+理，强烈推荐，p43 --- p66 讲解 CICD 可跳过。
 
 ## 参考
 
