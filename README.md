@@ -8,7 +8,7 @@
 > 微前端和微服务都是为了解决大项目和大团队的难题：大项目实现**模块解耦**，大团队实现**人员解耦**，这两大难题是《软件工程
 > 》这门课程研究的主要问题。
 
-[更新信息](https://www.ruanyifeng.com/blog/2021/05/scaling-problem.html)
+[更多信息](https://www.ruanyifeng.com/blog/2021/05/scaling-problem.html)
 
 ## 为何需要微前端
 
