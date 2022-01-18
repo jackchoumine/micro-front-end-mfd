@@ -123,10 +123,10 @@ const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPl
 
 > 如何在 container 使用 dashboard 呢？
 
-在 container 中新建一个 `DashboardApp.jsx`组件来引入 dashboard:
+在 container 中新建一个 `DashboardApp.jsx` 组件来引入 dashboard:
 
-> dashboard 是 container 里 remotes 的字段 DashboardApp 是 dashboard 在 exposes 里暴露而 key mount 是 dashboard 里导出的
-> 一个挂载函数，可在 container 将该应用挂载到任何地方
+> dashboard 是 container 里 remotes 的字段 DashboardApp 是 dashboard 在 exposes 里暴露而 key 是 dashboard 里导出的一个挂
+> 载函数，可在 container 将该应用挂载到任何地方
 
 ```jsx
 import { mount } from 'dashboard/DashboardApp' // NOTE 注意这里的写法和配置的对应关系
@@ -358,7 +358,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 ```
 
-> 集成时使用内存路由，同时还需要检测浏览器路径是否变化，在变化时切换路由，否则 container 导航是，dashboard 不会变化。
+> 集成时使用内存路由，同时还需要检测浏览器路径是否变化，在变化时切换路由，否则 container 导航时，dashboard 不会变化。
 
 在 `App.vue` 中实现跳转过程：
 
@@ -652,38 +652,45 @@ css 样式库，自行构建，比较麻烦。
 
 按照后台微服务划分，有的团队，后台使用微服务架构，可考虑按照微服务划分。
 
-### 其他问题
+### 微应用用 react 开发，如何集成到 container?
 
-### 应用之间如何共享数据
+以上和 vue3 集成到 container，react 应用如何集成到 container 呢？
 
-`函数调用`，函数调用的特点:
+思路和前面的类似，从 react 微应用导出 `mount`，同时也要处理路由到底、样式冲突等问题。
 
-1. 在**定义处**接收到**外部数据（通过参数）**，在*调用处*获取到*返回值*，**参数**和**返回值**将定义处和调用处联系起来。
-2. 依赖少，函数设计适当，可有效降低依赖---最好的情况，只依赖参数，也非常容易扩展。
+现在有一个 marketing 的 react 应用，希望集成到 container 到。
 
-dashboard 的 bootstrap.js
+入口文件 `dashboard.js`
 
 ```js
-import { createApp } from 'vue'
-import App from './App.vue'
-import { setupRouter } from './route'
-import { createRouter, createWebHistory, createMemoryHistory, RouteRecordRaw } from 'vue-router'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { createMemoryHistory, createBrowserHistory } from 'history'
+import App from './App'
 
-const mount = (el, { isMemoryHistory, basePath, currentPath, onNavigate, sharedData = {} }) => {
-  const app = createApp(App, { basePath, currentPath, isMemoryHistory, onNavigate, sharedData })
-  const history = isMemoryHistory ? createMemoryHistory(basePath) : createWebHistory()
+// Mount function to start up the app
+function mount(el, { onChildNavigate, defaultHistory, currentPathParent }) {
+  const history =
+    defaultHistory ||
+    createMemoryHistory({
+      initialEntries: [currentPathParent],
+    })
+  const { pathname: currentPathChild } = history.location
+  // NOTE 浏览器刷新，应用会重新挂载，此时要保持路径和当前路径一致
+  if (currentPathParent && currentPathChild && currentPathParent !== currentPathChild) {
+    console.log('child history.push', currentPathParent)
+    history.push(currentPathParent)
+  }
 
-  setupRouter(app, { history })
+  onChildNavigate && history.listen(onChildNavigate)
 
-  app.mount(el)
+  ReactDOM.render(<App history={history} />, el)
+
   return {
     onParentNavigate({ pathname: nextPathname }) {
-      console.log('dashboard vue onParentNavigate', nextPathname)
-      history.listen((currentPath) => {
-        if (currentPath !== nextPathname) {
-          history.push(nextPathname)
-        }
-      })
+      const { pathname } = history.location
+
+      nextPathname && pathname !== nextPathname && history.push(nextPathname)
     },
   }
 }
@@ -691,11 +698,9 @@ const mount = (el, { isMemoryHistory, basePath, currentPath, onNavigate, sharedD
 // If we are in development and in isolation,
 // call mount immediately
 if (process.env.NODE_ENV === 'development') {
-  const devRoot = document.querySelector('#dashboard-dev-root')
-
-  if (devRoot) {
-    mount(devRoot, { isMemoryHistory: false })
-  }
+  const el = document.getElementById('_marketing-dev-root')
+  const history = createBrowserHistory()
+  el && mount(el, { defaultHistory: history })
 }
 
 // We are running through container
@@ -703,162 +708,142 @@ if (process.env.NODE_ENV === 'development') {
 export { mount }
 ```
 
-App.vue
-
-```html
-<template>
-  <div id="app">
-    <!-- <NotificationProvider> -->
-    <div id="nav">
-      <RouterLink to="/">Home</RouterLink>
-      <RouterLink to="/upload">Upload Dropzone</RouterLink>
-    </div>
-    <RouterView :sharedData="sharedData" />
-    <!-- </NotificationProvider> -->
-  </div>
-</template>
-
-<script>
-  import { nextTick, onMounted, watch } from '@vue/runtime-core'
-  import { useRouter, useRoute } from 'vue-router'
-  // import { NotificationProvider } from './store'
-  export default {
-    name: 'App',
-    components: {
-      // NotificationProvider,
-    },
-    props: {
-      onNavigate: {
-        type: Function,
-      },
-      basePath: {
-        type: String,
-        default: '/',
-      },
-      currentPath: {
-        type: String,
-        default: '/',
-      },
-      isMemoryHistory: {
-        type: Boolean,
-        default: false,
-      },
-      sharedData: {
-        type: Object,
-        default: () => ({}),
-      },
-    },
-    setup(props) {
-      const { basePath, currentPath, isMemoryHistory, onNavigate, sharedData } = props
-      const router = useRouter()
-      const route = useRoute()
-      watch(
-        () => route.path,
-        (newPath) => {
-          onNavigate && onNavigate(basePath + newPath)
-        },
-      )
-      onMounted(() => {
-        console.log('App vue mounted', basePath, currentPath, sharedData)
-        let nextPath = currentPath
-        if (currentPath.startsWith(basePath)) {
-          //NOTE 默认去到首页
-          nextPath = currentPath.replace(basePath, '') ?? '/'
-        }
-        // NOTE 如果是 memoryHistory，才跳转
-        isMemoryHistory && router.push(nextPath)
-      })
-      return {}
-    },
-  }
-</script>
-
-<style scoped lang="scss">
-  #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
-    padding-bottom: 10px;
-  }
-
-  #nav a {
-    font-weight: bold;
-    color: #2c3e50;
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-</style>
-```
-
-route
+在 `index.js` 引入 `bootstrap.js`
 
 ```js
-import { App } from 'vue'
-import { createRouter, createWebHistory, createMemoryHistory, RouteRecordRaw } from 'vue-router'
+import('./bootstrap')
+```
 
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: () => import('../views/Home.vue'),
-  },
-  {
-    path: '/upload',
-    name: 'upload',
-    component: () => import('../views/Upload.vue'),
-  },
-]
+`webpack.dev.js` 配置
 
-export function setupRouter(app, { history = createWebHistory() } = {}) {
-  const router = createRouter({
-    // 4. Provide the history implementation to use.
-    // We are using the hash history for simplicity here.
-    // baseUrl: '/dashboard',
-    // 最为子应用，使用内存history
-    // https://next.router.vuejs.org/api/#creatememoryhistory
-    history,
-    routes, // short for `routes: routes`
-  })
-  app.use(router)
+```js
+const { merge } = require('webpack-merge')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const ModuleFederationPlugin = require('webpack/lib/container/ModuleFederationPlugin')
+const commonConfig = require('./webpack.common')
+const packageJson = require('../package.json')
+
+const devConfig = {
+  mode: 'development',
+  output: {
+    publicPath: 'http://localhost:8081/',
+    clean: true, // build 之前清空 dist 目录
+  },
+  devServer: {
+    port: 8081,
+    historyApiFallback: true,
+  },
+  plugins: [
+    new ModuleFederationPlugin({
+      name: 'marketing',
+      filename: 'remoteEntry.js',
+      exposes: {
+        './MarketingApp': './src/bootstrap',
+      },
+      shared: packageJson.dependencies,
+    }),
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
+    }),
+  ],
 }
 
-// export default router
+module.exports = merge(commonConfig, devConfig)
 ```
 
-container dashboard
+在 container 的`MarketingApp.jsx` 引入 marketing
 
-```js
-import { mount } from 'dashboard/DashboardApp'
+```jsx
+import { mount } from 'marketing/MarketingApp'
 import React, { useRef, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 
-export default ({ isSignedIn, user }) => {
+export default () => {
   const ref = useRef(null)
   const history = useHistory()
+
   useEffect(() => {
     const { onParentNavigate } = mount(ref.current, {
-      isMemoryHistory: true,
-      basePath: '/dashboard',
-      currentPath: history.location.pathname,
-      onNavigate: (nextPathname) => {
+      currentPathParent: history.location.pathname,
+      onChildNavigate: ({ pathname: nextPathname }) => {
+        console.log('marketing react: ', nextPathname)
         const { pathname } = history.location
-        if (pathname !== nextPathname) {
-          console.log('vue 子应用跳转', nextPathname)
-          history.push(nextPathname)
-        }
+
+        nextPathname && pathname !== nextPathname && history.push(nextPathname)
       },
-      sharedData: { isSignedIn, user },
     })
-    console.log('container dashboard navigate')
+
     history.listen(onParentNavigate)
   }, [])
 
   return <div ref={ref} />
 }
 ```
+
+在 container 路由中配置 `MarketingApp`
+
+```jsx
+import React, { lazy, Suspense, useState, useEffect } from 'react'
+import { Router, Route, Switch, Redirect } from 'react-router-dom'
+import { StylesProvider, createGenerateClassName } from '@material-ui/core/styles'
+import { createBrowserHistory } from 'history'
+
+import { Progress, Header } from './components'
+
+const MarketingLazy = lazy(() => import('./components/MarketingApp'))
+
+const generateClassName = createGenerateClassName({
+  productionPrefix: 'co',
+})
+
+const history = createBrowserHistory()
+
+export default () => {
+  const [isSignedIn, setIsSignedIn] = useState(window.localStorage.getItem('isSignedIn') === 'true')
+  const [user, setUser] = useState(JSON.parse(window.localStorage.getItem('user')))
+
+  useEffect(() => {
+    if (isSignedIn) {
+      history.push('/dashboard')
+    }
+  }, [isSignedIn])
+
+  return (
+    <Router history={history}>
+      <StylesProvider generateClassName={generateClassName}>
+        <div>
+          <Header
+            onSignOut={() => {
+              window.localStorage.removeItem('isSignedIn')
+              window.localStorage.removeItem('user')
+              window.sessionStorage.removeItem('user')
+              setIsSignedIn(false)
+            }}
+            isSignedIn={isSignedIn}
+          />
+          <Suspense fallback={<Progress />}>
+            <Switch>
+              <Route path='/' component={MarketingLazy} />
+            </Switch>
+          </Suspense>
+        </div>
+      </StylesProvider>
+    </Router>
+  )
+}
+```
+
+### 为何使用函数实现数据共享
+
+`函数调用`，函数调用的特点:
+
+1. 在**定义处**接收到**外部数据（通过参数）**，在*调用处*获取到*返回值*，**参数**和**返回值**将定义处和调用处联系起来。
+2. 依赖少，函数设计适当，可有效降低依赖---最好的情况，只依赖参数，也非常容易扩展。
+3. 函数是 js 代码，能在任意框架调用。
+
+### 为何不导出组件，以实现在 container 中集成？
+
+组件难以实现跨框架使用。
 
 ## 参考
 
