@@ -845,6 +845,23 @@ export default () => {
 
 组件难以实现跨框架使用。
 
+### 集成方案和源码
+
+```bash
+container --- react
+auth --- react
+dashboard --- vue3
+marketing --- react
+```
+
+[micro-front-end-mfd](https://github.com/jackchoumine/micro-front-end-mfd)
+
+### 推荐教程
+
+本文根据视频教
+程[使用 React 的微前端，完整的开发指南 Microfrontends with React A Complete Developer's Guide](https://www.bilibili.com/video/BV1Yq4y1o7ab)整
+理，强烈推荐，p43 --- p66 CICD 可跳过。
+
 ## 参考
 
 [Webpack 5 and Module Federation - A Microfrontend Revolution](https://dev.to/marais/webpack-5-and-module-federation-4j1i)
