@@ -895,3 +895,11 @@ marketing --- react
 [Webpack 5 Module Federation: A game-changer in JavaScript architecture](https://indepth.dev/posts/1173/webpack-5-module-federation-a-game-changer-in-javascript-architecture)
 
 [webpack 5 模块联邦实现微前端疑难问题解决](https://blog.csdn.net/mjzhang1993/article/details/115871597)
+
+https://cloud.tencent.com/developer/article/1391619
+
+https://cloud.tencent.com/developer/article/1191483?from=article.detail.1391619
+
+https://cloud.tencent.com/developer/article/1561708?from=article.detail.1391619
+
+https://juejin.cn/post/6844903854832631821
