@@ -882,6 +882,16 @@ marketing --- react
 
 [micro-front-end-mfd](https://github.com/jackchoumine/micro-front-end-mfd)
 
+[集成后的页面](https://jackchoumine.github.io/react-container/)
+
+独立部署
+
+[marketing-react 微应用](https://jackchoumine.github.io/react-marketing/)
+
+[vue3-dashboard](https://jackchoumine.github.io/vue3-dashboard/)
+
+[react-auth 微应用](https://jackchoumine.github.io/react-auth/)
+
 ### 推荐教程
 
 本文根据视频教
