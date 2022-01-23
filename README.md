@@ -898,6 +898,10 @@ marketing --- react
 程[使用 React 的微前端，完整的开发指南 Microfrontends with React A Complete Developer's Guide](https://www.bilibili.com/video/BV1Yq4y1o7ab)整
 理，强烈推荐，p43 --- p66 讲解 CICD 可跳过。
 
+
+```bash
+Uncaught Error: Shared module is not available for eager consumption: webpack/sharing/consume/default/react/react
+```
 ## 参考
 
 [Webpack 5 and Module Federation - A Microfrontend Revolution](https://dev.to/marais/webpack-5-and-module-federation-4j1i)
